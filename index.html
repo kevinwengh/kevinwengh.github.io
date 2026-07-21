@@ -1,0 +1,161 @@
+# Personal Website index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kevin Wen | Personal Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1518655048521-f130df041f66?fm=jpg&q=60&w=3000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <span class="text-xl font-bold tracking-tight">KEVIN WEN</span>
+            <div class="hidden md:flex space-x-8 font-medium text-sm text-gray-600">
+                <a href="#about" class="hover:text-black transition">About</a>
+                <a href="#projects" class="hover:text-black transition">Projects</a>
+                <a href="#contact" class="hover:text-black transition">Contact</a>
+            </div>
+            <!-- Mobile Menu Button (logic omitted for brevity, but targets are reachable) -->
+            <button class="md:hidden text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-bg h-screen flex items-center justify-center text-center text-white px-4">
+        <div class="max-w-3xl">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">Hi, I'm Kevin Wen.</h1>
+            <p class="text-lg md:text-xl font-light mb-8 text-gray-200">A passionate developer building elegant solutions to complex problems.</p>
+            <a href="#projects" class="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-200 transition duration-300">View My Work</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <img src="https://images.unsplash.com/photo-1719400471588-575b23e27bd7?fm=jpg&q=60&w=3000&auto=format&fit=crop" alt="Kevin Wen" class="rounded-2xl shadow-xl w-full h-[400px] object-cover">
+            </div>
+
+            <div>
+                <h2 class="text-3xl font-bold mb-6">About Me</h2>
+                <p class="text-gray-600 leading-relaxed mb-6">
+                    I am a software developer based in Sammamish, WA, focused on creating user-centric applications. With a background in computer science, I enjoy bridging the gap between functional design and technical excellence.
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-bold text-sm uppercase tracking-wider text-gray-400 mb-2">Primary Skills</h4>
+                        <ul class="text-gray-700 space-y-1">
+                            <li>JavaScript / React</li>
+                            <li>Python / Django</li>
+                            <li>HTML5 / Tailwind CSS</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm uppercase tracking-wider text-gray-400 mb-2">Experience</h4>
+                        <p class="text-gray-700">3+ Years of Building Web Apps</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4">Featured Projects</h2>
+            <p class="text-gray-600">A collection of things I've built recently.</p>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
+            <!-- Project 1 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?fm=jpg&q=60&w=3000&auto=format&fit=crop" alt="Project One" class="h-48 w-full object-cover">
+                <div class="p-6">
+                    <h3 class="font-bold text-xl mb-2">Project Alpha</h3>
+                    <p class="text-gray-600 text-sm mb-4">A real-time analytics dashboard built with React and D3.js.</p>
+                    <div class="flex space-x-2">
+                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">React</span>
+
+                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">API</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Project 2 (Placeholder) -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                <img src="https://placehold.co/600x400/111827/FFFFFF?text=Project+Beta" alt="Project Two" class="h-48 w-full object-cover">
+                <div class="p-6">
+                    <h3 class="font-bold text-xl mb-2">Project Beta</h3>
+                    <p class="text-gray-600 text-sm mb-4">An automated workflow tool designed to boost developer productivity.</p>
+                    <div class="flex space-x-2">
+                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">Python</span>
+                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">Scripting</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Project 3 (Placeholder) -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                <img src="https://placehold.co/600x400/e5e7eb/1f2937?text=Project+Gamma" alt="Project Three" class="h-48 w-full object-cover">
+
+                <div class="p-6">
+                    <h3 class="font-bold text-xl mb-2">Project Gamma</h3>
+                    <p class="text-gray-600 text-sm mb-4">A minimalist e-commerce template optimized for mobile devices.</p>
+                    <div class="flex space-x-2">
+                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">E-commerce</span>
+                        <span class="px-2 py-1 bg-gray-100 text-xs rounded">UI/UX</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer id="contact" class="py-24 bg-black text-white text-center">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8">Let's Connect</h2>
+            <p class="text-gray-400 mb-12 italic">Currently looking for new opportunities and collaborations.</p>
+            <div class="flex justify-center space-x-8 mb-12">
+                <a href="mailto:kevin@example.com" class="text-gray-400 hover:text-white transition">Email</a>
+
+                <a href="https://github.com/kevinwengh" class="text-gray-400 hover:text-white transition">GitHub</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">LinkedIn</a>
+            </div>
+            <div class="pt-8 border-t border-gray-800 text-xs text-gray-500">
+                &copy; 2026 Kevin Wen. Hosted on GitHub Pages.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple console message to verify JavaScript is working
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Portfolio initialized successfully.');
+        });
+    </script>
+</body>
+</html>
+
+
