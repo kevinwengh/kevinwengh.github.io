@@ -27,7 +27,9 @@ a:hover { color: var(--accent); }
 .wordmark { font-size: 0.86rem; font-weight: 800; letter-spacing: 0.12em; text-decoration: none; }
 .nav-links { display: flex; font-size: 0.84rem; font-weight: 700; gap: 1.4rem; letter-spacing: 0.04em; }
 .nav-links a { text-decoration: none; }
-.hero { padding: clamp(3.25rem, 7vw, 5.5rem) 0 3rem; }
+.hero { align-items: center; display: grid; gap: clamp(1.5rem, 5vw, 4rem); grid-template-columns: minmax(0, 1fr) minmax(180px, 250px); padding: clamp(3.25rem, 7vw, 5.5rem) 0 3rem; }
+.profile-photo { border: 1px solid var(--line); display: block; justify-self: end; overflow: hidden; }
+.profile-photo img { display: block; height: auto; width: 100%; }
 .eyebrow { color: var(--accent); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
 h1, h2, h3 { line-height: 1.05; }
 h1 { font-size: clamp(2.35rem, 4.5vw, 4.2rem); letter-spacing: -0.055em; margin: 0.4rem 0 0.9rem; max-width: 900px; }
@@ -105,7 +107,8 @@ h1 { font-size: clamp(2.35rem, 4.5vw, 4.2rem); letter-spacing: -0.055em; margin:
   .shell { width: min(100% - 2rem, var(--wide)); }
   .site-nav { min-height: 64px; }
   .nav-links { gap: 0.75rem; }
-  .stats, .focus-grid { grid-template-columns: 1fr; }
+  .hero, .stats, .focus-grid { grid-template-columns: 1fr; }
+  .profile-photo { justify-self: start; max-width: 180px; }
   .stat + .stat { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
   .section-heading, .resume-section, .impact-list li { grid-template-columns: 1fr; }
   .role-header, .footer-row { align-items: flex-start; flex-direction: column; gap: 0.35rem; }
