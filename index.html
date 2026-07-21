@@ -20,8 +20,9 @@
         <div class="eyebrow">Cloud platforms · data · security</div>
         <h1>I build the systems <em>other systems</em> depend on.</h1>
         <p class="lede">Engineering leader with 20+ years shaping cloud services, distributed platforms, and organizations at Oracle Cloud Infrastructure, AWS, and Microsoft.</p>
-        <div class="actions"><a class="button" href="resume/">Read my résumé</a><a class="button button--quiet" href="articles/">Explore my writing</a></div>
+        <div class="actions"><a class="button" href="resume/">Read my résumé</a><a class="button button--quiet" href="articles/">Explore my writing</a><a class="button button--quiet" href="https://www.linkedin.com/in/kevin-wen-9a594012/" target="_blank" rel="noopener noreferrer">View LinkedIn</a></div>
       </div>
+      <button class="profile-photo" type="button" aria-label="View a larger portrait of Kevin Wen" data-portrait-open><img src="assets/kevin-wen-profile.jpg" alt="Kevin Wen"></button>
     </section>
     <section class="stats shell" aria-label="Selected career facts">
       <div class="stat"><span class="stat-number">20+</span><span class="stat-label">years in engineering leadership</span></div>
@@ -53,5 +54,16 @@
     </section>
   </main>
   <footer class="site-footer"><div class="footer-row shell"><span>© 2026 Kevin Wen</span><div class="footer-links"><a href="mailto:kevinwen@gmail.com">Email</a><a href="https://www.linkedin.com/in/kevin-wen-9a594012/" target="_blank" rel="noopener noreferrer">LinkedIn</a></div></div></footer>
+  <dialog class="photo-dialog" aria-label="Portrait of Kevin Wen" data-portrait-dialog><button class="photo-dialog-close" type="button" aria-label="Close portrait" data-portrait-close>×</button><img src="assets/kevin-wen-profile.jpg" alt="Kevin Wen"></dialog>
+  <script>
+    const portraitOpen = document.querySelector('[data-portrait-open]');
+    const portraitDialog = document.querySelector('[data-portrait-dialog]');
+    const portraitClose = document.querySelector('[data-portrait-close]');
+    portraitOpen.addEventListener('click', () => portraitDialog.showModal());
+    portraitClose.addEventListener('click', () => portraitDialog.close());
+    portraitDialog.addEventListener('click', (event) => {
+      if (event.target === portraitDialog) portraitDialog.close();
+    });
+  </script>
 </body>
 </html>

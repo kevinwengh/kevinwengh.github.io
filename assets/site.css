@@ -28,7 +28,13 @@ a:hover { color: var(--accent); }
 .nav-avatar { border: 1px solid var(--line); border-radius: 50%; display: block; height: 36px; object-fit: cover; width: 36px; }
 .nav-links { display: flex; font-size: 0.84rem; font-weight: 700; gap: 1.4rem; letter-spacing: 0.04em; }
 .nav-links a { text-decoration: none; }
-.hero { padding: clamp(3.25rem, 7vw, 5.5rem) 0 3rem; }
+.hero { align-items: center; display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: minmax(0, 1fr) minmax(140px, 180px); padding: clamp(3.25rem, 7vw, 5.5rem) 0 3rem; }
+.profile-photo { background: transparent; border: 1px solid var(--line); border-radius: 50%; cursor: zoom-in; display: block; justify-self: end; overflow: hidden; padding: 0; width: min(100%, 180px); }
+.profile-photo img { display: block; height: auto; width: 100%; }
+.photo-dialog { background: transparent; border: 0; max-height: min(90vh, 900px); max-width: min(90vw, 760px); padding: 0; position: relative; }
+.photo-dialog::backdrop { background: rgba(13, 20, 17, 0.78); }
+.photo-dialog img { display: block; height: auto; max-height: 90vh; max-width: 90vw; width: 100%; }
+.photo-dialog-close { background: var(--surface); border: 1px solid var(--line); border-radius: 50%; color: var(--ink); cursor: pointer; font-size: 1.5rem; height: 2.25rem; line-height: 1; position: absolute; right: 0.6rem; top: 0.6rem; width: 2.25rem; }
 .eyebrow { color: var(--accent); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
 h1, h2, h3 { line-height: 1.05; }
 h1 { font-size: clamp(2.35rem, 4.5vw, 4.2rem); letter-spacing: -0.055em; margin: 0.4rem 0 0.9rem; max-width: 900px; }
@@ -106,7 +112,8 @@ h1 { font-size: clamp(2.35rem, 4.5vw, 4.2rem); letter-spacing: -0.055em; margin:
   .shell { width: min(100% - 2rem, var(--wide)); }
   .site-nav { min-height: 64px; }
   .nav-links { gap: 0.75rem; }
-  .stats, .focus-grid { grid-template-columns: 1fr; }
+  .hero, .stats, .focus-grid { grid-template-columns: 1fr; }
+  .profile-photo { justify-self: start; width: 140px; }
   .nav-avatar { height: 32px; width: 32px; }
   .stat + .stat { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
   .section-heading, .resume-section, .impact-list li { grid-template-columns: 1fr; }
