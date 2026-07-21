@@ -15,7 +15,7 @@
     </nav>
   </header>
   <main>
-    <section class="hero shell">
+    <section class="hero home-hero shell">
       <div class="hero-copy">
         <div class="eyebrow">Cloud platforms · data · security</div>
         <h1>I build the systems <em>other systems</em> depend on.</h1>
@@ -24,38 +24,37 @@
       </div>
       <button class="profile-photo" type="button" aria-label="View a larger portrait of Kevin Wen" data-portrait-open><img src="assets/kevin-wen-profile.jpg" alt="Kevin Wen"></button>
     </section>
-    <section class="stats shell" aria-label="Selected career facts">
+    <section class="stats home-stats shell" aria-label="Selected career facts">
       <div class="stat"><span class="stat-number">20+</span><span class="stat-label">years in engineering leadership</span></div>
       <div class="stat"><span class="stat-number">3</span><span class="stat-label">global cloud companies</span></div>
       <div class="stat"><span class="stat-number">500M+</span><span class="stat-label">security signals processed daily</span></div>
     </section>
-    <section class="section shell">
-      <div class="section-heading"><h2>Where I work best</h2><p>I operate where technical complexity, customer trust, and organizational scale meet.</p></div>
-      <div class="focus-grid">
-        <article class="focus-card"><h3>Critical cloud services</h3><p>Tier-0 systems, secrets, PKI, encryption, and the operational rigor required to earn trust.</p></article>
-        <article class="focus-card"><h3>Data at platform scale</h3><p>Security data lakes, telemetry, streaming, and reliability infrastructure that turn signals into decisions.</p></article>
-        <article class="focus-card"><h3>Architecture with consequences</h3><p>Technical direction for systems with high availability, compliance, cost, and customer-scale constraints.</p></article>
-        <article class="focus-card"><h3>Leaders and organizations</h3><p>Building teams, managers, durable operating mechanisms, and the next generation of technical leaders.</p></article>
-      </div>
-    </section>
-    <section class="section section--dark">
-      <div class="shell">
-        <div class="section-heading"><h2>Selected impact</h2><p>Examples of the scale and outcomes that guide my work.</p></div>
-        <ul class="impact-list">
-          <li><strong>10×</strong><span>Improved Secrets read scalability through encrypted local data-plane caching.</span></li>
-          <li><strong>30%</strong><span>Reduced observability-platform cost while scaling to 40M metric datapoints per second.</span></li>
-          <li><strong>50%</strong><span>Reduced annual compliance-review time from three months to one.</span></li>
-        </ul>
-      </div>
-    </section>
-    <section class="section shell">
-      <div class="section-heading"><h2>Selected writing</h2><p>Essays on engineering leadership, distributed systems, AI-assisted work, security, and the decisions behind resilient platforms.</p></div>
-      <div class="focus-grid">
-        <article class="focus-card"><div class="eyebrow">AI systems</div><h3><a href="articles/agent-harness.html">The Building Blocks of an Agent Harness</a></h3><p>Memory, tools, skills, approval, and the controlled loop that turns an LLM into a dependable agent.</p></article>
-        <article class="focus-card"><div class="eyebrow">Data platforms</div><h3><a href="articles/spark-driver-control-plane.html">The Spark Driver Is a Control Plane</a></h3><p>Why driver memory, local loops, and small-file metadata can become the real bottleneck in a distributed Spark job.</p></article>
-        <article class="focus-card"><div class="eyebrow">Architecture</div><h3><a href="articles/system-design-review-questions.html">Seven Questions a System Design Review Must Force</a></h3><p>Questions that turn an architecture review from a diagram walkthrough into an explicit trade-off discussion.</p></article>
-      </div>
-      <p class="writing-cta"><a class="button button--quiet" href="articles/">Browse all 15 articles →</a></p>
+    <section class="home-deck shell">
+      <section class="home-writing" aria-labelledby="writing-heading">
+        <div class="compact-heading"><div><div class="eyebrow">Writing</div><h2 id="writing-heading">Ideas from the field</h2></div><a class="text-link" href="articles/">All 15 articles →</a></div>
+        <ol class="home-article-list">
+          <li><div class="eyebrow">AI systems</div><h3><a href="articles/agent-harness.html">The Building Blocks of an Agent Harness</a></h3><p>Memory, tools, skills, approval, and the controlled loop that turns an LLM into a dependable agent.</p></li>
+          <li><div class="eyebrow">Data platforms</div><h3><a href="articles/spark-driver-control-plane.html">The Spark Driver Is a Control Plane</a></h3><p>Why driver memory, local loops, and small-file metadata can become the real bottleneck in a distributed Spark job.</p></li>
+          <li><div class="eyebrow">Architecture</div><h3><a href="articles/system-design-review-questions.html">Seven Questions a System Design Review Must Force</a></h3><p>Questions that turn an architecture review into an explicit trade-off discussion.</p></li>
+        </ol>
+      </section>
+      <section class="home-profile" aria-labelledby="focus-heading">
+        <div class="compact-heading"><div><div class="eyebrow">Focus</div><h2 id="focus-heading">Where I work best</h2></div></div>
+        <div class="home-focus-grid">
+          <article><h3>Critical cloud services</h3><p>Tier-0 systems, secrets, PKI, encryption, and operational rigor.</p></article>
+          <article><h3>Data at platform scale</h3><p>Security data lakes, telemetry, streaming, and reliability infrastructure.</p></article>
+          <article><h3>Architecture with consequences</h3><p>Technical direction under availability, compliance, cost, and scale constraints.</p></article>
+          <article><h3>Leaders and organizations</h3><p>Teams, managers, operating mechanisms, and technical leaders.</p></article>
+        </div>
+        <div class="home-impact" aria-labelledby="impact-heading">
+          <h2 id="impact-heading">Selected impact</h2>
+          <ul>
+            <li><strong>10×</strong><span>Secrets read scalability</span></li>
+            <li><strong>30%</strong><span>Observability cost reduction</span></li>
+            <li><strong>50%</strong><span>Compliance-review time reduction</span></li>
+          </ul>
+        </div>
+      </section>
     </section>
   </main>
   <footer class="site-footer"><div class="footer-row shell"><span>© 2026 Kevin Wen</span><div class="footer-links"><a href="mailto:kevinwen@gmail.com">Email</a><a href="https://www.linkedin.com/in/kevin-wen-9a594012/" target="_blank" rel="noopener noreferrer">LinkedIn</a></div></div></footer>
