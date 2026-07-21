@@ -59,6 +59,7 @@ h1 { font-size: clamp(2.35rem, 4.5vw, 4.2rem); letter-spacing: -0.055em; margin:
 .focus-card { background: var(--surface); padding: 1.75rem; }
 .focus-card h3 { font-size: 1.18rem; letter-spacing: -0.03em; margin: 0 0 0.6rem; }
 .focus-card p { color: var(--muted); margin: 0; }
+.writing-cta { margin: 1.5rem 0 0; }
 .impact-list { list-style: none; margin: 0; padding: 0; }
 .impact-list li { border-top: 1px solid rgba(255,255,255,.25); display: grid; gap: 1.5rem; grid-template-columns: 0.7fr 2fr; padding: 1.6rem 0; }
 .impact-list strong { font-family: Arial, Helvetica, sans-serif; font-size: 1.3rem; letter-spacing: -0.04em; }
