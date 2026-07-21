@@ -75,6 +75,15 @@ h1 { font-size: clamp(3.4rem, 8vw, 7.6rem); letter-spacing: -0.065em; margin: 0.
 .article-list { list-style: none; margin: 0; padding: 0; }
 .article-list li { border-top: 1px solid var(--line); padding: 1.4rem 0; }
 .article-list h2 { font-size: 1.7rem; letter-spacing: -0.04em; margin: 0 0 0.4rem; }
+.tag-filter, .tag-list { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.tag-filter { margin: 0 0 2.5rem; }
+.tag-filter button, .tag-list a { background: transparent; border: 1px solid var(--line); color: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 0.42rem 0.6rem; text-decoration: none; text-transform: uppercase; }
+.tag-filter button { cursor: pointer; }
+.tag-filter button[aria-pressed="true"], .tag-filter button:hover { background: var(--forest); border-color: var(--forest); color: white; }
+.tag-list { margin: 0.9rem 0 0; }
+.tag-list a:hover { border-color: var(--accent); color: var(--accent); }
+.article-list li[hidden] { display: none; }
+.filter-status { color: var(--muted); font-family: Arial, Helvetica, sans-serif; font-size: 0.82rem; margin: 0 0 1rem; }
 .empty-state { background: var(--surface); border: 1px solid var(--line); max-width: 700px; padding: 2.25rem; }
 .empty-state h2 { font-size: 1.8rem; letter-spacing: -0.04em; margin-top: 0; }
 .article { max-width: 760px; padding: 4.5rem 0 6rem; }
