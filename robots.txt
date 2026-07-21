@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kevinwengh.github.io/sitemap.xml
