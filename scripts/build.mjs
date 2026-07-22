@@ -27,6 +27,7 @@ const TAG_LABELS = {
   "agentic-engineering": "Agentic Engineering",
   "software-architecture": "Software Architecture",
   "distributed-systems": "Distributed Systems",
+  "performance-engineering": "Performance Engineering",
   "data-platforms": "Data Platforms",
   "security": "Security",
   "engineering-leadership": "Engineering Leadership",

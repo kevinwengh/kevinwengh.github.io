@@ -1,0 +1,86 @@
+<!doctype html>
+<!-- Generated from content/articles/runtime-java-codegen-experience.md by scripts/build.mjs. Edit the Markdown source, not this file. -->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Generating, compiling, and running Java at runtime: an honest field report — an essay by Kevin Wen."><title>Generating, compiling, and running Java at runtime: an honest field report — Kevin Wen</title><link rel="stylesheet" href="../assets/site.css"><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" href="../assets/favicon-180.png"><link rel="canonical" href="https://kevinwengh.github.io/articles/runtime-java-codegen-experience.html"><meta property="og:type" content="article"><meta property="og:site_name" content="Kevin Wen"><meta property="og:url" content="https://kevinwengh.github.io/articles/runtime-java-codegen-experience.html"><meta property="og:title" content="Generating, compiling, and running Java at runtime: an honest field report"><meta property="og:description" content="Generating, compiling, and running Java at runtime: an honest field report — an essay by Kevin Wen."><meta property="og:image" content="https://kevinwengh.github.io/assets/kevin-wen-profile.jpg"><meta property="article:published_time" content="2021-05-01"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Generating, compiling, and running Java at runtime: an honest field report"><meta name="twitter:description" content="Generating, compiling, and running Java at runtime: an honest field report — an essay by Kevin Wen."><meta name="twitter:image" content="https://kevinwengh.github.io/assets/kevin-wen-profile.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Generating, compiling, and running Java at runtime: an honest field report","description":"Generating, compiling, and running Java at runtime: an honest field report — an essay by Kevin Wen.","datePublished":"2021-05-01","image":"https://kevinwengh.github.io/assets/kevin-wen-profile.jpg","mainEntityOfPage":"https://kevinwengh.github.io/articles/runtime-java-codegen-experience.html","author":{"@type":"Person","name":"Kevin Wen","url":"https://kevinwengh.github.io/"},"publisher":{"@type":"Person","name":"Kevin Wen"}}</script></head>
+<body>
+  <header class="site-header"><nav class="site-nav shell" aria-label="Primary navigation"><a class="wordmark" href="../"><img class="nav-avatar" width="36" height="36" src="../assets/kevin-wen-profile.jpg" alt=""><span>KEVIN WEN</span></a><div class="nav-links"><a href="../resume/">Résumé</a><a href="./">Writing</a><a href="mailto:kevinwen@gmail.com">Contact</a></div></nav></header>
+  <main class="article shell">
+    <div class="eyebrow">Essay</div><h1>Generating, compiling, and running Java at runtime: an honest field report</h1><p class="meta">May 1, 2021</p><div class="tag-list"><a href="./?tag=performance-engineering">Performance Engineering</a><a href="./?tag=software-architecture">Software Architecture</a><a href="./?tag=security">Security</a></div>
+    <div class="article-content"><h2>The problem that led us here</h2><p>We had a narrow but hot workload: take a raw JSON string, apply a small SQL-like transform
+(<code>SELECT customer.name AS name, UPPER(city) AS city WHERE active = true</code>), and emit a new JSON
+string. Millions of times. The same handful of queries, applied to an endless stream of documents.</p><p>The obvious implementation is an <strong>interpreter</strong>: parse the query into an AST once, then walk that
+tree for every input document. It works, it’s simple, and it’s what most people should build first.
+But a tree-walk pays interpretation overhead on every document — polymorphic dispatch on every AST
+node, boxing, and a general-purpose JSON tree in memory.</p><p>Because the <em>query</em> is fixed and only the <em>data</em> changes, there’s another option: treat the query
+as a program, and <strong>compile it once into a specialized Java class</strong> whose <code>transform(String)</code> method
+does exactly this query and nothing else. The per-document cost then collapses to straight-line code
+the JIT can inline and optimize like any hand-written method.</p><p>This is the “generate Java source at runtime, compile it, load it, and call it” pattern. Here’s what
+we learned doing it for real. Reference code: <a href="https://github.com/kevinwengh/oss_sharing/tree/main/json-stream-codegen">github.com/kevinwengh/oss_sharing/json-stream-codegen</a>.</p><h2>The pipeline</h2><p>The whole thing is the standard JSR-199 (<code>javax.tools</code>) recipe. Six stages:</p><pre>query text
+   │  parse + canonicalize
+   ▼
+AST ──► Java *source* string   (a code generator emits a class implementing a known interface)
+   │  javax.tools.JavaCompiler, in memory
+   ▼
+bytecode (bytes in a Map, never touches disk)
+   │  custom ClassLoader.defineClass
+   ▼
+Class&lt;?&gt; ──► reflectively instantiate ONCE ──► cache the instance
+   │
+   ▼
+hot path: call through the interface, no reflection</pre><p>The pieces, concretely:</p><p><strong>1. A code generator</strong> turns the validated AST into a Java source string. The generated class implements a stable interface known at build time:</p><pre>public interface StringJsonTransformer {
+    String transform(String input);   // null when the predicate doesn't match
+}</pre><p><strong>2. In-memory compilation</strong> via <code>ToolProvider.getSystemJavaCompiler()</code>. The trick is a <code>ForwardingJavaFileManager</code> that captures emitted bytecode into a <code>ByteArrayOutputStream</code> instead of writing <code>.class</code> files, plus a <code>SimpleJavaFileObject</code> that feeds the source from a string. No temp directory, no disk I/O.</p><p><strong>3. A per-query child ClassLoader</strong> whose <code>findClass</code> calls <code>defineClass</code> on the captured bytes.</p><p><strong>4. Reflection exactly once</strong> — to invoke the generated class’s constructor. After that, every <code>transform</code> call is an ordinary virtual method call through the interface.</p><p><strong>5. Caching</strong> so a given query compiles only once, keyed both by exact text and by a canonical (whitespace/case-normalized) form.</p><p>If you’ve seen the widely-copied <code>InMemoryJavaCompiler</code> gists, Baeldung’s runtime-compilation
+tutorial, or Spring’s expression compiler, this will look familiar. That’s the point: it’s a
+well-trodden pattern, and the value is in the details you add around it.</p><h2>What worked well</h2><h3>1. The interface boundary keeps reflection off the hot path</h3><p>This is the single most important decision. The generated class implements an interface we control.
+We reflect <strong>once</strong>, at instantiation, to call the constructor — and never again. Steady-state
+execution is a plain interface dispatch that the JIT devirtualizes and inlines.</p><p>The common anti-pattern is to <code>Method.invoke(...)</code> on every call. That reintroduces reflection
+overhead on the hot path and defeats the entire reason you compiled the code. If you take one thing
+from this write-up: <strong>generate a class that implements a known interface, and call through it.</strong></p><h3>2. Specialization actually pays</h3><p>On our workload — large, sparse documents where the query touches a few fields — the compiled path
+was meaningfully faster and dramatically lower-allocation than the tree-walking baseline (roughly a
+third less latency, and per-operation allocation dropping from ~100 KB to ~1 KB, because the
+generated code reads only the selected fields and writes straight to a <code>StringBuilder</code> instead of
+building a general JSON tree). Your mileage varies with query and document shape, but when the query
+is fixed and the data volume is high, moving work from per-document to per-query is a real win.</p><h3>3. Per-query classloaders make classes collectable</h3><p>Each compiled query gets its own child <code>ClassLoader</code>. This matters: a class can only be unloaded
+when its defining loader becomes unreachable. If you compile everything into one shared loader (as
+many examples do), your generated classes live forever. Giving each query its own loader means the
+class <em>can</em> be garbage-collected once nothing references it.</p><p>(Caveat below — “can be collected” and “is collected” are not the same thing.)</p><h3>4. Semantic caching plus single-owner compilation</h3><p>We cache on two keys: the raw query text, and a canonical form that normalizes whitespace and case
+so <code>SELECT name</code> and <code>select   name</code> share one compiled class. Concurrent requests for the same
+uncompiled query resolve through a shared <code>CompletableFuture</code>, so only one thread runs the compiler
+and the rest wait on the result. A failed compile evicts the entry so it can be retried. None of
+this is exotic, but it’s the difference between a demo and something you can put under load.</p><h3>5. String codegen can be injection-safe — if you’re disciplined</h3><p>Generating <strong>source text</strong> from user input is exactly the setup where injection bugs breed. We kept
+it safe by never letting user-controlled text become code:</p><ul><li>output names are emitted as <strong>escaped string literals</strong>, never as identifiers;</li><li>input field names become <strong>integer array slots</strong> (<code>fields[3]</code>), never emitted names;</li><li>function names are either matched against a <strong>fixed allow-list</strong> before becoming a method call, or passed as <strong>escaped string arguments</strong> to a dispatcher;</li><li>the generated class name is a <strong>hash</strong> of the query, not derived from its text.</li></ul><p>The rule that made this tractable: <em>user input flows into the generated program only as data
+(escaped literals or numeric indices), never as syntax.</em> If you can hold that line, string-based
+codegen is defensible. If you can’t, you shouldn’t be concatenating source.</p><h3>6. Readable generated code is a debugging superpower</h3><p>Because we generate <em>source</em> (not raw bytecode), we could dump it (<code>--show-source</code>) and even assert
+on it in tests. When a transform misbehaved, we read the generated method like any other Java. That
+debuggability is the main reason to prefer source generation over hand-emitting bytecode.</p><h2>What bit us (the honest cons)</h2><h3>1. It requires a full JDK at runtime, not a JRE</h3><p><code>ToolProvider.getSystemJavaCompiler()</code> returns <code>null</code> on a JRE. Your service now depends on the
+compiler being present — which rules out stripped <code>jlink</code> images and some minimal base containers,
+and surprises anyone who assumed “it’s just Java.” We detect the null and fail loudly, but the
+constraint is real and it’s the first thing to check before choosing this approach. This one fact
+disqualifies the pattern for a lot of deployment targets.</p><h3>2. Compilation is slow, and the first call pays for it</h3><p>Invoking <code>javac</code> in-process costs on the order of tens of milliseconds per query — orders of
+magnitude more than parsing. Caching amortizes it across the life of the process, but:</p><ul><li>the <strong>first</strong> request for each query eats the full compile latency (a cold-start / tail-latency problem);</li><li>we hand the compiler the whole application classpath (<code>System.getProperty("java.class.path")</code>) so generated code can see our runtime types, which means <code>javac</code> rescans that classpath on every compile. Fine at low query cardinality; a latency tax if you compile often.</li></ul><p>If your queries are effectively unbounded and rarely repeat, the compile cost may never amortize and
+this pattern is the wrong tool.</p><h3>3. “Collectable” classes still leak if you cache them forever</h3><p>We celebrated per-query classloaders for GC — then pinned every compiled instance in an
+unbounded cache for the life of the engine. So in practice the classes never become unreachable.
+Under unbounded distinct queries that’s a slow <strong>metaspace</strong> leak, not heap, so it hides from the
+usual memory dashboards until it doesn’t. The honest fix is a bounded/LRU cache; until then,
+“query admission” is a capacity concern you have to manage operationally. Document it, or better,
+enforce it.</p><h3>4. No sandbox — the query admission point <em>is</em> the security boundary</h3><p>Generated bytecode runs with full application permissions. There’s no seccomp, no SecurityManager
+(and that’s deprecated anyway), no resource governor around the generated method. For trusted,
+first-party queries this is fine. For anything resembling user-supplied queries, understand that the
+place you decide <em>which queries to compile</em> is your only line of defense. Treat it accordingly.</p><h3>5. Errors move from parse time to compile time</h3><p>A bug in the code generator surfaces as a <strong>Java compilation error against generated source</strong> — a
+stack trace pointing at a line of code the user never wrote and can’t see. You have to invest in
+turning compiler diagnostics into intelligible messages (we collect diagnostics and format
+line-referenced errors into the thrown exception). Budget for it; the raw <code>javac</code> output is not
+something you want to show a caller.</p><h2>The fork in the road: how else could we have built this?</h2><p>Runtime code generation has three mainstream flavors, and the right answer depends entirely on your
+constraints:</p><table><thead><tr><th scope="col">Approach</th><th scope="col">Needs JDK at runtime?</th><th scope="col">Compile speed</th><th scope="col">Debuggability</th><th scope="col">Best when</th></tr></thead><tbody><tr><td><strong>Source + <code>javax.tools</code> (this project)</strong></td><td><strong>Yes</strong></td><td>Slow (real <code>javac</code>)</td><td>High (readable source)</td><td>Trusted queries, high reuse, you value readable output and don’t control the deploy image tightly</td></tr><tr><td><strong>Bytecode gen (ASM, ByteBuddy)</strong></td><td>No</td><td>Fast</td><td>Low (you debug bytecode)</td><td>JRE-only / minimal images, tight latency budgets, high query churn</td></tr><tr><td><strong>Embedded compiler (Janino)</strong></td><td>No (ships its own)</td><td>Medium</td><td>Medium</td><td>You want source-like ergonomics without the JDK dependency, and can accept a language subset</td></tr></tbody></table><p>We chose the JSR-199 path because our queries are trusted and highly repeated, and because being
+able to <em>read</em> the generated code was worth more to us than shaving milliseconds off a
+once-per-query compile. Had we needed to run on a JRE, or faced unbounded one-shot queries, we’d
+have gone to ByteBuddy and accepted worse debuggability.</p><p>There’s also the option we didn’t need but should name: <strong>don’t generate code at all.</strong> If your
+per-item cost is dominated by I/O, or your throughput is modest, a plain AST interpreter is simpler,
+has none of these downsides, and is where you should start. Codegen earns its complexity only when
+the query is fixed, the data volume is large, and the per-document overhead genuinely matters.</p><h2>Takeaways</h2><ul><li><strong>Generate a class that implements a known interface, and call through it.</strong> Reflection belongs at instantiation, never on the hot path.</li><li><strong>Let user input in as data, never as syntax.</strong> Escaped literals and numeric indices are safe; interpolated identifiers are how you get injection.</li><li><strong>Prefer generating source over bytecode</strong> unless a hard constraint (no JDK, latency, churn) forces your hand — readability during debugging is worth a lot.</li><li><strong>The JDK-at-runtime requirement is a deployment decision, not a detail.</strong> Verify it before you commit to <code>javax.tools</code>.</li><li><strong>Cache deliberately, and bound the cache.</strong> “Collectable” classes you never release are still a leak — in metaspace, where you won’t be looking.</li><li><strong>Codegen is a scaling optimization, not a default.</strong> Reach for it when profiling says the per-item interpretation cost is your bottleneck; otherwise an interpreter is the honest answer.</li></ul><p>The pattern is powerful and, done carefully, more approachable than its reputation suggests — the
+<code>javax.tools</code> API does the heavy lifting. But every one of its benefits comes with a matching cost,
+and the engineering is mostly in the details you build <em>around</em> the compiler, not in calling it.</p></div>
+  </main>
+  <footer class="site-footer"><div class="footer-row shell"><span>© 2026 Kevin Wen</span><div class="footer-links"><a href="mailto:kevinwen@gmail.com">Email</a><a href="https://www.linkedin.com/in/kevin-wen-9a594012/" target="_blank" rel="noopener noreferrer">LinkedIn</a></div></div></footer>
+</body>
+</html>
