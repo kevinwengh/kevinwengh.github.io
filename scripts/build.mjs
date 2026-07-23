@@ -227,7 +227,7 @@ const NAV = (current) =>
 const FOOTER =
   `<footer class="site-footer"><div class="footer-row shell"><span>© 2026 Kevin Wen</span>` +
   `<div class="footer-links"><a href="mailto:kevinwen@gmail.com">Email</a>` +
-  `<a href="https://www.linkedin.com/in/kevin-wen-9a594012/" target="_blank" rel="noopener noreferrer">LinkedIn</a></div></div></footer>`;
+  `<a href="https://www.linkedin.com/in/kevinwengh" target="_blank" rel="noopener noreferrer">LinkedIn</a></div></div></footer>`;
 
 const FAVICONS =
   `<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">` +
